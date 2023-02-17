@@ -536,7 +536,7 @@ static Result<Success> queue_fs_event(int code) {
     
 static Result<Success> do_install_keyring(const BuiltinArguments& args) {
     if (e4crypt_install_keyring()) {
-        return ERROR() << "failed to install keyring");
+        return Error() << "Failed to install keyring";
     }
     property_set("ro.crypto.state", "encrypted");
     property_set("ro.crypto.type", "file");
