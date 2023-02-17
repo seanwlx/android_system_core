@@ -533,6 +533,15 @@ static Result<Success> queue_fs_event(int code) {
 
     return Error() << "Invalid code: " << code;
 }
+    
+static Result<Success> do_install_keyring(const BuiltinArguments& args) {
+    if (e4crypt_install_keyring()) {
+        return ERROR() << "failed to install keyring");
+    }
+    property_set("ro.crypto.state", "encrypted");
+    property_set("ro.crypto.type", "file");
+    return Success();
+}
 
 /* mount_all <fstab> [ <path> ]* [--<options>]*
  *
@@ -1049,6 +1058,8 @@ const BuiltinFunctionMap::Map& BuiltinFunctionMap::map() const {
         {"ifup",                    {1,     1,    {true,   do_ifup}}},
         {"init_user0",              {0,     0,    {false,  do_init_user0}}},
         {"insmod",                  {1,     kMax, {true,   do_insmod}}},
+        // Hack to enable Android12+ decryption for TWRP
+        {"install_keyring",         {0,     0,    {false,  do_install_keyring}}},
         {"installkey",              {1,     1,    {false,  do_installkey}}},
         {"load_persist_props",      {0,     0,    {false,  do_load_persist_props}}},
         {"load_system_props",       {0,     0,    {false,  do_load_system_props}}},
